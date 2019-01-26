@@ -7,12 +7,33 @@
   <title>HMI Secure Grading</title>
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+  <style>[v-cloak] {display: none;}</style>
 </head>
 <body>
-  <v-app id="app">
-    
+  <v-app id="app" v-cloak>
+    <video id="video" v-show="video" width="100%" autoplay muted style="position: absolute;"></video>
+    <canvas id="canvas" :height="height" :width="width" style="display: none;"></canvas>
+    <img :src="image" v-show="!video" width="100%">
+    <v-container>
+      <v-btn @click="camera()" fab bottom fixed :loading="loading" style="left: 0; right: 0; margin-left: auto; margin-right: auto;">
+        <v-icon>photo_camera</v-icon>
+      </v-btn>
+      <v-dialog v-model="error" max-width="400">
+        <v-card>
+          <v-card-title class="headline">
+            <v-icon class="error--text">error</v-icon>
+            <v-flex px-3>Error</v-flex>
+          </v-card-title>
+          <v-card-text>{{errorMsg}}</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn @click="error=false" flat>Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-container>
   </v-app>
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
   <script src="index.js"></script>
 </body>
