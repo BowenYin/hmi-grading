@@ -1,0 +1,10 @@
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /keys/{key} {
+      allow read;
+    }
+    match /forms/{form} {
+    	allow read;
+    }
+  }
+}

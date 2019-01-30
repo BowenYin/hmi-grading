@@ -20,22 +20,24 @@ var app=new Vue({
       video: {facingMode: "environment", height: 4096, width: 4096}
     }).then(stream=>{
       video.srcObject=stream;
-      let specs=stream.getVideoTracks()[0].getSettings();
-      this.width=specs.width;
-      this.height=specs.height;
       this.loading=false;
+      video.addEventListener("canplay", event=>{
+        this.width=video.videoWidth;
+        this.height=video.videoHeight;
+      });
     }).catch(err=>{
       this.error=true;
       this.errorMsg=err.message;
     });
   },
   methods: {
-    camera: function() {
+    capture: function() {
       this.loading=true;
       let context=canvas.getContext("2d");
-      context.drawImage(video, 0, 0, this.width, this.height);
+      video.pause();
+      context.drawImage(video, 0, 0, this.width/4, this.height/4);
       video.srcObject.getVideoTracks()[0].stop();
-      this.image=canvas.toDataURL();
+      this.image=canvas.toDataURL("image/jpeg");
       this.video=false;
     }
   }
