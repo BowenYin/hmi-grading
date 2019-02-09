@@ -81,6 +81,7 @@ exports.grade=functions.https.onCall((data, context)=>{
  * This function is NOT for hmi-grading, but I included it so I can share resources with this project.
  * Gets weather data for a specified city and date and stores historical data in the database.
  * This is for the Harker Boys Golf Schedule spreadsheet, for providing live weather info on any day.
+ * Powered by Yahoo Weather Developer API
  * @param {string} date     date in YYYY/MM/DD format with padded month/day
  * @param {string} location city name and state code like "San Jose, CA"
  * @returns {string}        basic info string with weather condition and temperature
@@ -91,7 +92,9 @@ exports.getWeather=functions.https.onRequest((req, res)=>{
     return res.send("Invalid location format");
   if (!/^[0-9]{4}\/[0-9]{2}\/[0-9]{2}$/.test(req.query.date)) // YYYY/MM/DD
     return res.send("Invalid date format");
-  let date=new Date(req.query.date), today=new Date();
+  let date=new Date(req.query.date);
+  date=new Date(date*2-new Date(date.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}))); // date in Pacific Time
+  let today=new Date();
   if (date-today>9*24*3600*1000)
     return res.send("Future date");
   req.query.date=req.query.date.replace(/\//g, "-"); // change to YYYY-MM-DD for database
@@ -99,7 +102,7 @@ exports.getWeather=functions.https.onRequest((req, res)=>{
     return database.ref("locations/"+req.query.location+"/"+req.query.date).once("value").then(data=>{
       if (!data.exists()) return res.send("Not found");
       let forecast=data.val();
-      return res.status(200).send(forecast.text+" "+forecast.high+"°");
+      return res.status(200).send(formatForecast(forecast));
     });
   if (!oauth) oauth=require("oauth"); // lazy load dependency
   let request=new oauth.OAuth(null, null, config.weather.key, config.weather.secret, "1.0", null, "HMAC-SHA1", null, null);
@@ -111,7 +114,16 @@ exports.getWeather=functions.https.onRequest((req, res)=>{
       return date>=forecast.date*1000;
     });
     return database.ref("locations/"+req.query.location+"/"+req.query.date).set(forecast).then(()=>{
-      return res.status(200).send(forecast.text+" "+forecast.high+"°");
+      return res.status(200).send(formatForecast(forecast));
     });
   });
 });
+/**
+ * Formats a weather forecast entry from the API to a short, simple string.
+ * This is for the golf weather function, which is not part of the hmi-grading project.
+ * @param {Object} forecast object with forecast info for a specific day
+ * @returns {string}        weather info in the format Temp° Condition
+ */
+function formatForecast(forecast) {
+  return forecast.high+"° "+forecast.text.replace("Scattered", "Scat.").replace("Thunderstorms", "T-storms");
+}
