@@ -78,7 +78,7 @@ exports.grade=functions.https.onCall((data, context)=>{
   });
 });
 /**
- * This function is not for hmi-grading, but I included it so I can share resources with this project.
+ * This function is NOT for hmi-grading, but I included it so I can share resources with this project.
  * Gets weather data for a specified city and date and stores historical data in the database.
  * This is for the Harker Boys Golf Schedule spreadsheet, for providing live weather info on any day.
  * @param {string} date     date in YYYY/MM/DD format with padded month/day
@@ -88,27 +88,25 @@ exports.grade=functions.https.onCall((data, context)=>{
 exports.getWeather=functions.https.onRequest((req, res)=>{
   console.log({date: req.query.date, location: req.query.location, agent: req.get("User-Agent")});
   if (!/^[A-Z]\w+( [A-Z]\w+)*, [A-Z][A-Z]$/.test(req.query.location)) // City, ST
-    return res.status(400).send("Invalid location format");
+    return res.send("Invalid location format");
   if (!/^[0-9]{4}\/[0-9]{2}\/[0-9]{2}$/.test(req.query.date)) // YYYY/MM/DD
-    return res.status(400).send("Invalid date format");
+    return res.send("Invalid date format");
   let date=new Date(req.query.date), today=new Date();
   if (date-today>9*24*3600*1000)
-    return res.status(400).send("Future date");
+    return res.send("Future date");
   req.query.date=req.query.date.replace(/\//g, "-"); // change to YYYY-MM-DD for database
   if (date<today-24*3600*1000) // if date is in the past
     return database.ref("locations/"+req.query.location+"/"+req.query.date).once("value").then(data=>{
-      if (!data.exists()) return res.status(404).send("Date not found");
+      if (!data.exists()) return res.send("Not found");
       let forecast=data.val();
       return res.status(200).send(forecast.text+" "+forecast.high+"°");
-    }).catch(error=>{
-      return res.status(404).send("Location not found");
     });
   if (!oauth) oauth=require("oauth"); // lazy load dependency
   let request=new oauth.OAuth(null, null, config.weather.key, config.weather.secret, "1.0", null, "HMAC-SHA1", null, null);
   return request.get("https://weather-ydn-yql.media.yahoo.com/forecastrss?format=json&location="+req.query.location, null, null, function(error, data, response) {
-    if (error) return res.status(500).send("API call error");
+    if (error) return res.send("API call error");
     data=JSON.parse(data);
-    if (data.location.country!=="United States") return res.status(404).send("Location not found");
+    if (data.location.country!=="United States") return res.send("Location not found");
     let forecast=data.forecasts.reverse().find(forecast=>{
       return date>=forecast.date*1000;
     });
