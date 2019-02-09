@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "dotenv": "^6.2.0",
     "firebase-admin": "^7.0.0",
-    "firebase-functions": "^2.2.0"
+    "firebase-functions": "^2.2.0",
+    "oauth": "^0.9.15"
   },
   "private": true
 }
