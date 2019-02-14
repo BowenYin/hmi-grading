@@ -20,7 +20,7 @@ axios.defaults.httpsAgent=new https.Agent({keepAlive: true});
  * @param {string} images.uri   data URI of the image
  * @returns {Object}
  */
-exports.grade=functions.https.onCall((data, context)=>{
+exports.gradeForm=functions.https.onCall((data, context)=>{
   if (data.password!==config.hmi.password)
     throw new functions.https.HttpsError("permission-denied", "Incorrect password");
   return database.ref("keys/"+data.id).once("value").then(snapshot=>{
@@ -33,11 +33,10 @@ exports.grade=functions.https.onCall((data, context)=>{
   }).then(form=>{
     if (!answers[data.form])
       answers[data.form]=form=form.data(); // cache answer form if not already
-    let requests=[];
-    var results=[];
-    var score=0;
-    
+    let requests=[], results=[];
+    let score=0;
     data.images.forEach(image=>{
+      requests.push(axios.post("https://api.mathpix.com/v3/latex"));
       return axios.post("/latex", {src: image.uri}, {
         headers: {
           app_id: data.id,
