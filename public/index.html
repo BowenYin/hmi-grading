@@ -14,7 +14,13 @@
     <!-- <v-responsive v-show="video" :aspect-ratio="200/500" width="400" :max-height="videoEl.offsetHeight" :max-width="videoEl.offsetWidth" style="margin: auto; z-index: 1; border: 3px solid black; border-radius: 3px;">
       <div style="border: 3px solid black; height: 100%; width: 100%; border-radius: 3px;"></div>
     </v-responsive> -->
-    <div v-if="container" :style="{width: '100%', height: settings.form.height/settings.form.width*videoEl.offsetHeight+'px', maxHeight: videoEl.offsetHeight+'px', maxWidth: settings.form.width/settings.form.height*videoEl.offsetWidth+'px', marginLeft: 'auto', marginRight: 'auto', border: '3px solid black', borderRadius: '3px', zIndex: 1}"></div>
+    <div id="container" v-show="container" :style="{width: '100%', height: containerHeight+'px', maxHeight: videoEl.offsetHeight+'px', maxWidth: containerWidth+'px', marginLeft: 'auto', marginRight: 'auto', border: '3px solid black', borderRadius: '3px', zIndex: 1}"></div>
+    <div v-show="fields">
+      <div v-for="field in settings.form.fields" :style="{height: fieldHeight+'px', width: fieldWidth+'px', top: containerEl.clientTop+field.y/settings.form.height*containerEl.clientHeight+'px', left: gap+field.x/settings.form.width*containerEl.clientWidth+'px', border: '2px solid dimgray', borderRadius: '2px', position: 'absolute', zIndex: 1}"></div>
+    </div>
+    <!-- <div v-if="container">
+        <div v-for="(field, name) in settings.form.fields" :style="{height: fieldHeight, width: fieldWidth, top: compY(field.y)+'px', left: compX(field.x)+'px', border: '2px solid dimgray', borderRadius: '2px', position: 'absolute', zIndex: 1}"></div>
+    </div> -->
     <video id="video" v-show="video" width="100%" autoplay muted style="position: absolute;"></video>
     <canvas id="canvas" :height="camera.height/4" :width="camera.width/4" style="display: none;"></canvas>
     <canvas id="field" :height="settings.form.fieldHeight" :width="settings.form.fieldWidth" style="display: none;"></canvas>
