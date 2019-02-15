@@ -7,7 +7,9 @@ var app=new Vue({
   },
   data: {
     loading: true,
-    video: true,
+    container: false,
+    video: false,
+    videoEl: {},
     dialogs: {
       setup: true,
       error: false,
@@ -16,7 +18,7 @@ var app=new Vue({
     settings: {
       password: "",
       id: "",
-      form: ""
+      form: {}
     },
     camera: {
       width: 0,
@@ -26,11 +28,12 @@ var app=new Vue({
     errorMsg: "",
     ids: [],
     forms: [],
-    answerForm: {},
+    images: [],
     field: {},
   },
   mounted: function() {
     videoEl=document.getElementById("video");
+    this.videoEl=videoEl;
     canvasEl=document.getElementById("canvas");
     firebase.database().ref("/ids").once("value").then(snapshot=>{
       let val=snapshot.val();
@@ -51,6 +54,8 @@ var app=new Vue({
       context.drawImage(videoEl, 0, 0, this.camera.width/4, this.camera.height/4);
       videoEl.srcObject.getVideoTracks()[0].stop();
       this.camera.image=canvasEl.toDataURL("image/jpeg");
+      this.loading=false;
+      this.container=false;
       this.video=false;
     },
     cancel: function() {
@@ -62,6 +67,7 @@ var app=new Vue({
         videoEl.addEventListener("canplay", event=>{
           this.camera.width=videoEl.videoWidth;
           this.camera.height=videoEl.videoHeight;
+          this.container=true;
         });
       }).catch(err=>{
         this.errorMsg=err.message;
@@ -69,12 +75,12 @@ var app=new Vue({
       });
       this.video=true;
     },
-    gradeForm: function() {
+    grade: function() {
       gradeForm({
-        id: this.answerForm.id,
-        password: this.answerForm.password,
-        form: this.answerForm.form,
-        images: this.answerForm.images,
+        id: this.settings.id,
+        password: this.settings.password,
+        form: this.settings.form.name,
+        images: this.images,
       }).then(result=>{
         
       }).catch(err=>{

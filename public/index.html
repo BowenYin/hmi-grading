@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>HMI Secure Grading</title>
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
@@ -11,81 +11,90 @@
 </head>
 <body>
   <v-app id="app" v-cloak>
+    <!-- <v-responsive v-show="video" :aspect-ratio="200/500" width="400" :max-height="videoEl.offsetHeight" :max-width="videoEl.offsetWidth" style="margin: auto; z-index: 1; border: 3px solid black; border-radius: 3px;">
+      <div style="border: 3px solid black; height: 100%; width: 100%; border-radius: 3px;"></div>
+    </v-responsive> -->
+    <div v-if="container" :style="{width: '100%', height: settings.form.height/settings.form.width*videoEl.offsetHeight+'px', maxHeight: videoEl.offsetHeight+'px', maxWidth: settings.form.width/settings.form.height*videoEl.offsetWidth+'px', marginLeft: 'auto', marginRight: 'auto', border: '3px solid black', borderRadius: '3px', zIndex: 1}"></div>
     <video id="video" v-show="video" width="100%" autoplay muted style="position: absolute;"></video>
     <canvas id="canvas" :height="camera.height/4" :width="camera.width/4" style="display: none;"></canvas>
-    <canvas id="field" :height="field.fieldHeight" :width="field.fieldWidth" style="display: none;"></canvas>
-    <img :src="image" v-show="!video" width="100%">
-    <v-container>
-      <v-fab-transition>
-        <v-btn v-show="video" @click="capture()" fab large bottom fixed :loading="loading" style="left: 0; right: 0; margin-left: auto; margin-right: auto;">
-          <v-icon>photo_camera</v-icon>
-        </v-btn>
-      </v-fab-transition>
-      <v-fab-transition>
-        <v-btn v-show="!video" @click="cancel()" fab bottom left fixed color="error">
-          <v-icon>close</v-icon>
-        </v-btn>
-      </v-fab-transition>
-      <v-fab-transition>
-        <v-btn v-show="!video" @click="gradeForm()" fab bottom right fixed color="success">
-          <v-icon>check</v-icon>
-        </v-btn>
-      </v-fab-transition>
-      <v-dialog v-model="dialogs.setup" :fullscreen="$vuetify.breakpoint.xsOnly" persistent scrollable max-width="500" transition="dialog-bottom-transition">
-        <v-card>
-          <v-card-title>Configure Settings</v-card-title>
-          <v-divider></v-divider>
-          <v-card-text style="height: 100%;">
-            <v-container>
-              <v-layout>
-                <v-flex xs12>
-                  <v-text-field v-model="settings.password" type="password" label="Password" box required autofocus hint="Required for grading forms" browser-autocomplete="off"></v-text-field>
-                </v-flex>
-              </v-layout>
-              <v-layout>
-                <v-flex xs12>
-                  <v-select v-model="settings.id" label="Select an ID" :items="ids" item-text="id" item-value="id" required :loading="ids.length==0"></v-select>
-                </v-flex>
-              </v-layout>
-              <v-layout>
-                <v-flex xs12>
-                  <v-select v-model="settings.form" label="Select an Answer Form" :items="forms" item-text="name" item-value="name" required :loading="forms.length==0"></v-select>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card-text>
-          <v-divider></v-divider>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn depressed color="primary" v-on:click="dialogs.setup=false; cancel();">Save & Close</v-btn>
-            <v-spacer></v-spacer>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <v-dialog v-model="dialogs.error" max-width="400">
-        <v-card>
-          <v-card-title class="headline">
-            <v-icon class="error--text">error</v-icon>
-            <v-flex px-3>Error</v-flex>
-          </v-card-title>
-          <v-card-text>{{errorMsg}}</v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn @click="dialogs.error=false" flat>Close</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <v-dialog v-model="dialogs.result" persistent max-width="500">
-        <v-card>
-          <v-card-title class="headline">headline</v-card-title>
-          <v-card-text>text</v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" depressed @click="dialogs.result=false">Done</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </v-container>
+    <canvas id="field" :height="settings.form.fieldHeight" :width="settings.form.fieldWidth" style="display: none;"></canvas>
+    <img :src="camera.image" v-show="!video" width="100%">
+    <!-- <v-container> -->
+    <v-fab-transition>
+      <v-btn v-show="video" @click="capture()" :loading="loading" fab large bottom fixed style="left: 0; right: 0; margin-left: auto; margin-right: auto;">
+        <v-icon>photo_camera</v-icon>
+      </v-btn>
+    </v-fab-transition>
+    <v-fab-transition>
+      <v-btn v-show="video" @click="dialogs.setup=true; capture();" fab small top right fixed>
+        <v-icon>settings</v-icon>
+      </v-btn>
+    </v-fab-transition>
+    <v-fab-transition>
+      <v-btn v-show="!video" @click="cancel()" :disabled="loading" fab bottom left fixed color="error">
+        <v-icon>close</v-icon>
+      </v-btn>
+    </v-fab-transition>
+    <v-fab-transition>
+      <v-btn v-show="!video" @click="grade()" :loading="loading" fab bottom right fixed color="success">
+        <v-icon>check</v-icon>
+      </v-btn>
+    </v-fab-transition>
+    <v-dialog v-model="dialogs.setup" :fullscreen="$vuetify.breakpoint.xsOnly" persistent scrollable max-width="500" transition="dialog-bottom-transition">
+      <v-card>
+        <v-card-title>Configure Settings</v-card-title>
+        <v-divider></v-divider>
+        <v-card-text style="height: 100%;">
+          <v-container>
+            <v-layout>
+              <v-flex xs12>
+                <v-text-field v-model="settings.password" type="password" label="Password" box required autofocus hint="Required for grading forms" browser-autocomplete="off"></v-text-field>
+              </v-flex>
+            </v-layout>
+            <v-layout>
+              <v-flex xs12>
+                <v-select v-model="settings.id" label="Select an ID" :items="ids" item-text="id" item-value="id" required :loading="ids.length==0"></v-select>
+              </v-flex>
+            </v-layout>
+            <v-layout>
+              <v-flex xs12>
+                <v-select v-model="settings.form" label="Select an Answer Form" :items="forms" item-text="name" return-object required :loading="forms.length==0"></v-select>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn large depressed color="primary" v-on:click="dialogs.setup=false; cancel();">Save & Close</v-btn>
+          <v-spacer></v-spacer>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="dialogs.error" max-width="400">
+      <v-card>
+        <v-card-title class="headline">
+          <v-icon class="error--text">error</v-icon>
+          <v-flex px-3>Error</v-flex>
+        </v-card-title>
+        <v-card-text>{{errorMsg}}</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="dialogs.error=false" flat>Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="dialogs.result" persistent max-width="500">
+      <v-card>
+        <v-card-title class="headline">headline</v-card-title>
+        <v-card-text>text</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" depressed @click="dialogs.result=false">Done</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- </v-container> -->
   </v-app>
   <script src="/__/firebase/5.8.2/firebase-app.js"></script>
   <script src="/__/firebase/5.8.2/firebase-database.js"></script>
