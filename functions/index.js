@@ -1,4 +1,4 @@
-var oauth;
+var oauth; // to be lazy loaded later
 const functions=require("firebase-functions");
 const admin=require("firebase-admin");
 const axios=require("axios");
@@ -8,17 +8,14 @@ var firestore=admin.firestore();
 var database=admin.database();
 var answers={}; // cache answer lists
 var config=functions.config(); // environment config variables
-axios.defaults.baseUrl="https://api.mathpix.com/v3";
 axios.defaults.httpsAgent=new https.Agent({keepAlive: true});
 /**
  * Grades a given list of images represented as data URIs.
  * @param {string} id       ID to use for external API request
  * @param {string} password global password for all calls
  * @param {string} form     exact name of the answer sheet form that should be used
- * @param {Object[]} images list of images that should be graded
- * @param {string} images.field name of a single field to grade
- * @param {string} images.uri   data URI of the image
- * @returns {Object}
+ * @param {string[]} images list of image data URIs that should be graded
+ * @returns {Object}        object containing a total score and an array of fields
  */
 exports.gradeForm=functions.https.onCall((data, context)=>{
   if (data.password!==config.hmi.password)
@@ -26,18 +23,23 @@ exports.gradeForm=functions.https.onCall((data, context)=>{
   return database.ref("keys/"+data.id).once("value").then(snapshot=>{
     var key=snapshot.val();
     if (!key.available)
-      throw new functions.https.HttpsError("unavailable", "ID "+data.id+" is unavailable. Please refresh.");
+      throw new functions.https.HttpsError("unavailable", "ID "+data.id+" is unavailable.");
     if (answers[data.form])
       return answers[data.form]; // answer sheet is cached
     return firestore.collection("answers").doc(data.form).get(); // get answer sheet
   }).then(form=>{
     if (!answers[data.form])
       answers[data.form]=form=form.data(); // cache answer form if not already
-    let requests=[], results=[];
-    let score=0;
+    let requests=[], results=[], score=0;
     data.images.forEach(image=>{
-      requests.push(axios.post("https://api.mathpix.com/v3/latex"));
-      return axios.post("/latex", {src: image.uri}, {
+      requests.push(axios.post("https://api.mathpix.com/v3/latex", {
+        src: image
+      }, {headers: {
+        "app_id": data.id,
+        "app_key": key.key,
+        "Content-Type": "application/json"
+      }}));
+      /*return axios.post("/latex", {src: image.uri}, {
         headers: {
           app_id: data.id,
           app_key: key.key
@@ -60,16 +62,23 @@ exports.gradeForm=functions.https.onCall((data, context)=>{
         }
       }).catch(err=>{
         throw new functions.https.HttpsError("internal", "API error has occurred");
-      });
+      });*/
     });
-    return axios.all(requests).then(responses=>{
-      responses.forEach(res=>{
-        
+    return Promise.all(requests).then(responses=>{
+      responses.forEach((res, index)=>{
+        let result={
+          name: form[index].name,
+          latex: res.data.latex_normal,
+          confidence: res.data.latex_confidence
+        };
+        if (res.data.error_info) result.latex=res.data.error_info.message;
+        if (form[index].answers.includes(res.data.latex_normal)) {
+          results.correct=true;
+          score++;
+        } else results.correct=false;
+        results.push(result);
       });
-      return {
-        score,
-        results
-      };
+      return {score, results};
     });
   }).catch(error=>{
     if (error instanceof functions.https.HttpsError) throw error;
