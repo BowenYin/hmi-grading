@@ -29,7 +29,10 @@ exports.gradeForm=functions.https.onCall((data, context)=>{
     if (answers[data.form])
       return answers[data.form]; // answer sheet is cached
     return firestore.collection("answers").doc(data.form).get().then(doc=>{
-      return doc.data(); // get answer sheet
+      doc=doc.data();
+      if (doc.disabled)
+        throw new functions.https.HttpsError("unavailable", "Form "+data.form+" is unavailable.");
+      return doc; // get answer sheet
     });
   }).then(form=>{
     if (!answers[data.form])

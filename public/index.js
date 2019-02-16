@@ -31,6 +31,7 @@ var app=new Vue({
     ids: [],
     forms: [],
     images: [],
+    results: {}
   },
   computed: {
     containerWidth: function() {
@@ -56,6 +57,10 @@ var app=new Vue({
     },
     scale: function() {
       return this.videoEl.videoWidth/this.camera.width;
+    },
+    lowConfidence: function() {
+      if (!this.results.results) return;
+      return this.results.results.reduce((count, field)=>field.confidence<0.6?count+1:count, 0);
     }
   },
   mounted: function() {
@@ -112,8 +117,6 @@ var app=new Vue({
       this.loading=true;
       let context=fieldEl.getContext("2d");
       this.settings.form.fields.forEach(field=>{
-        console.log((this.gap+field.x*this.fieldX)*this.scale,
-        (this.containerEl.clientTop+field.y*this.fieldY)*this.scale,this.fieldWidth*this.scale, this.fieldHeight*this.scale);
         context.drawImage(this.videoEl,
           (this.gap+field.x*this.fieldX)*this.scale,
           (this.containerEl.clientTop+field.y*this.fieldY)*this.scale,
@@ -125,9 +128,10 @@ var app=new Vue({
         password: this.settings.password,
         form: this.settings.form.name,
         images: this.images,
-      }).then(result=>{
-        console.log(result);
-        this.result=true;
+      }).then(results=>{
+        this.results=results.data;
+        this.dialogs.result=true;
+        this.loading=false;
       }).catch(err=>{
         this.errorMsg=err.message;
         this.dialogs.error=true;
