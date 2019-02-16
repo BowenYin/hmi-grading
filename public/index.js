@@ -34,10 +34,10 @@ var app=new Vue({
   },
   computed: {
     containerWidth: function() {
-      return this.settings.form.height/this.settings.form.width*this.videoEl.offsetHeight || this.container;
+      return this.settings.form.width/this.settings.form.height*this.videoEl.offsetHeight || this.container;
     },
     containerHeight: function() {
-      return this.settings.form.width/this.settings.form.height*this.videoEl.offsetWidth || this.container;
+      return this.settings.form.height/this.settings.form.width*this.videoEl.offsetWidth || this.container;
     },
     fieldWidth: function() {
       return this.settings.form.fieldWidth/this.settings.form.width*this.containerEl.clientWidth || this.fields;
@@ -126,9 +126,9 @@ var app=new Vue({
       }).catch(err=>{
         this.errorMsg=err.message;
         this.dialogs.error=true;
+        this.loading=false;
         this.cancel();
       });
-      this.loading=false;
     }
   }
 });
