@@ -4,11 +4,11 @@ const admin=require("firebase-admin");
 const axios=require("axios");
 const https=require("https");
 admin.initializeApp();
-var firestore=admin.firestore();
-var database=admin.database();
+const firestore=admin.firestore();
+const database=admin.database();
+const config=functions.config(); // environment config variables
+const httpsAgent=new https.Agent({keepAlive: true});
 var answers={}; // cache answer lists
-var config=functions.config(); // environment config variables
-axios.defaults.httpsAgent=new https.Agent({keepAlive: true});
 /**
  * Grades a given list of images represented as data URIs.
  * @param {string} id       ID to use for external API request
@@ -18,61 +18,42 @@ axios.defaults.httpsAgent=new https.Agent({keepAlive: true});
  * @returns {Object}        object containing a total score and an array of fields
  */
 exports.gradeForm=functions.https.onCall((data, context)=>{
+  console.log({id: data.id, form: data.form});
   if (data.password!==config.hmi.password)
     throw new functions.https.HttpsError("permission-denied", "Incorrect password");
+  var key; // credentials for API from database
   return database.ref("keys/"+data.id).once("value").then(snapshot=>{
-    var key=snapshot.val();
+    key=snapshot.val();
     if (!key.available)
       throw new functions.https.HttpsError("unavailable", "ID "+data.id+" is unavailable.");
     if (answers[data.form])
       return answers[data.form]; // answer sheet is cached
-    return firestore.collection("answers").doc(data.form).get(); // get answer sheet
+    return firestore.collection("answers").doc(data.form).get().then(doc=>{
+      return doc.data(); // get answer sheet
+    });
   }).then(form=>{
     if (!answers[data.form])
-      answers[data.form]=form=form.data(); // cache answer form if not already
+      answers[data.form]=form; // cache answer form if not already
     let requests=[], results=[], score=0;
     data.images.forEach(image=>{
       requests.push(axios.post("https://api.mathpix.com/v3/latex", {
-        src: image
+        src: image,
+        ocr: ["math", "text"]
       }, {headers: {
         "app_id": data.id,
         "app_key": key.key,
         "Content-Type": "application/json"
-      }}));
-      /*return axios.post("/latex", {src: image.uri}, {
-        headers: {
-          app_id: data.id,
-          app_key: key.key
-        }
-      }).then(res=>{
-        if (form[image.field].includes(res.latex_normal)) {
-          results.push({
-            field: image.field,
-            correct: true,
-            ocr: image.latex_normal
-          });
-          score++;
-        } else {
-          results.push({
-            field: image.field,
-            correct: false,
-            ocr: image.latex_normal,
-            answer: form[image.field]
-          });
-        }
-      }).catch(err=>{
-        throw new functions.https.HttpsError("internal", "API error has occurred");
-      });*/
+      }, httpsAgent}));
     });
     return Promise.all(requests).then(responses=>{
       responses.forEach((res, index)=>{
         let result={
-          name: form[index].name,
-          latex: res.data.latex_normal,
+          name: form.fields[index].name || index,
+          latex: res.data.latex,
           confidence: res.data.latex_confidence
         };
         if (res.data.error_info) result.latex=res.data.error_info.message;
-        if (form[index].answers.includes(res.data.latex_normal)) {
+        if (form.fields[index].answers.includes(res.data.latex)) {
           results.correct=true;
           score++;
         } else results.correct=false;
@@ -80,9 +61,6 @@ exports.gradeForm=functions.https.onCall((data, context)=>{
       });
       return {score, results};
     });
-  }).catch(error=>{
-    if (error instanceof functions.https.HttpsError) throw error;
-    throw new functions.https.HttpsError("unknown", error);
   });
 });
 /**

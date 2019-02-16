@@ -16,14 +16,14 @@
     </v-responsive> -->
     <div id="container" v-show="container" :style="{width: '100%', height: containerHeight+'px', maxHeight: videoEl.offsetHeight+'px', maxWidth: containerWidth+'px', marginLeft: 'auto', marginRight: 'auto', border: '3px solid black', borderRadius: '3px', zIndex: 1}"></div>
     <div v-show="fields">
-      <div v-for="field in settings.form.fields" :style="{height: fieldHeight+'px', width: fieldWidth+'px', top: containerEl.clientTop+field.y/settings.form.height*containerEl.clientHeight+'px', left: gap+field.x/settings.form.width*containerEl.clientWidth+'px', border: '2px solid dimgray', borderRadius: '2px', position: 'absolute', zIndex: 1}"></div>
+      <div v-for="field in settings.form.fields" :style="{height: fieldHeight+'px', width: fieldWidth+'px', top: containerEl.clientTop+field.y*fieldY+'px', left: gap+field.x*fieldX+'px', border: '2px solid dimgray', borderRadius: '2px', position: 'absolute', zIndex: 1}"></div>
     </div>
     <!-- <div v-if="container">
         <div v-for="(field, name) in settings.form.fields" :style="{height: fieldHeight, width: fieldWidth, top: compY(field.y)+'px', left: compX(field.x)+'px', border: '2px solid dimgray', borderRadius: '2px', position: 'absolute', zIndex: 1}"></div>
     </div> -->
     <video id="video" v-show="video" width="100%" autoplay muted style="position: absolute;"></video>
-    <canvas id="canvas" :height="camera.height/4" :width="camera.width/4" style="display: none;"></canvas>
-    <canvas id="field" :height="settings.form.fieldHeight" :width="settings.form.fieldWidth" style="display: none;"></canvas>
+    <canvas id="canvas" :height="videoEl.videoHeight/4" :width="videoEl.videoWidth/4" style="display: none;"></canvas>
+    <canvas id="field" style="display: none;"></canvas>
     <img :src="camera.image" v-show="!video" width="100%">
     <!-- <v-container> -->
     <v-fab-transition>
