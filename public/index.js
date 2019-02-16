@@ -53,6 +53,9 @@ var app=new Vue({
     },
     gap: function() {
       return (this.videoEl.offsetWidth-this.containerEl.clientWidth)/2 || this.fields;
+    },
+    scale: function() {
+      return this.videoEl.videoWidth/this.camera.width;
     }
   },
   mounted: function() {
@@ -81,10 +84,11 @@ var app=new Vue({
       this.videoEl.srcObject.getVideoTracks()[0].stop();
       this.camera.image=canvasEl.toDataURL("image/jpeg");
       this.loading=false;
-      this.container=this.fields=false;
+      this.container=false;
       this.video=false;
     },
     cancel: function() {
+      this.fields=false;
       navigator.mediaDevices.getUserMedia({
         video: {facingMode: "environment", height: 4096, width: 4096}
       }).then(stream=>{
@@ -106,13 +110,14 @@ var app=new Vue({
     },
     grade: function() {
       this.loading=true;
-      const scale=this.videoEl.videoWidth/this.camera.width;
       let context=fieldEl.getContext("2d");
       this.settings.form.fields.forEach(field=>{
+        console.log((this.gap+field.x*this.fieldX)*this.scale,
+        (this.containerEl.clientTop+field.y*this.fieldY)*this.scale,this.fieldWidth*this.scale, this.fieldHeight*this.scale);
         context.drawImage(this.videoEl,
-          (this.gap+field.x*this.fieldX)*scale,
-          (this.containerEl.clientTop+field.y*this.fieldY)*scale,
-          this.fieldWidth*scale, this.fieldHeight*scale, 0, 0, this.fieldWidth*scale, this.fieldHeight*scale);
+          (this.gap+field.x*this.fieldX)*this.scale,
+          (this.containerEl.clientTop+field.y*this.fieldY)*this.scale,
+          this.fieldWidth*this.scale, this.fieldHeight*this.scale, 0, 0, this.fieldWidth*this.scale, this.fieldHeight*this.scale);
         this.images.push(fieldEl.toDataURL("image/jpeg"));
       });
       gradeForm({
