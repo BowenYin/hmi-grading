@@ -11,21 +11,15 @@
 </head>
 <body>
   <v-app id="app" v-cloak>
-    <!-- <v-responsive v-show="video" :aspect-ratio="200/500" width="400" :max-height="videoEl.offsetHeight" :max-width="videoEl.offsetWidth" style="margin: auto; z-index: 1; border: 3px solid black; border-radius: 3px;">
-      <div style="border: 3px solid black; height: 100%; width: 100%; border-radius: 3px;"></div>
-    </v-responsive> -->
     <div id="container" v-show="container" :style="{width: '100%', height: containerHeight+'px', maxHeight: videoEl.offsetHeight+'px', maxWidth: containerWidth+'px', marginLeft: 'auto', marginRight: 'auto', border: '2px solid #00C853', borderRadius: '1px', zIndex: 1}"></div>
     <div v-show="fields">
       <div v-for="field in settings.form.fields" :style="{height: fieldHeight+'px', width: fieldWidth+'px', top: 2+field.y*fieldY+'px', left: gap+field.x*fieldX+'px', border: '2px solid #2962FF', borderRadius: '1px', position: 'absolute', zIndex: 1}"></div>
     </div>
-    <!-- <div v-if="container">
-        <div v-for="(field, name) in settings.form.fields" :style="{height: fieldHeight, width: fieldWidth, top: compY(field.y)+'px', left: compX(field.x)+'px', border: '2px solid dimgray', borderRadius: '2px', position: 'absolute', zIndex: 1}"></div>
-    </div> -->
     <video id="video" v-show="video" width="100%" autoplay muted style="position: absolute;"></video>
     <canvas id="canvas" :height="videoEl.videoHeight/4" :width="videoEl.videoWidth/4" style="display: none;"></canvas>
     <canvas id="field" :height="fieldHeight*scale" :width="fieldWidth*scale" style="display: none;"></canvas>
     <img :src="camera.image" v-show="!video" width="100%">
-    <v-chip v-show="container" color="primary" text-color="white" small disabled ma-4 style="margin-left: 12px; margin-top: 16px; position: absolute;">{{videoEl.videoWidth}}x{{videoEl.videoHeight}}</v-chip>
+    <v-chip v-show="container" color="primary" text-color="white" small selected ma-4 style="margin-left: 12px; margin-top: 16px; position: absolute;">{{videoEl.videoWidth}}x{{videoEl.videoHeight}}</v-chip>
     <v-fab-transition>
       <v-btn v-show="video" @click="capture()" :loading="loading" fab large bottom fixed style="left: 0; right: 0; margin-left: auto; margin-right: auto;">
         <v-icon>photo_camera</v-icon>
@@ -48,7 +42,7 @@
     </v-fab-transition>
     <v-dialog v-model="dialogs.setup" :fullscreen="$vuetify.breakpoint.xsOnly" persistent scrollable max-width="500" transition="dialog-bottom-transition">
       <v-card>
-        <v-card-title>Configure Settings</v-card-title>
+        <v-card-title class="title">Configure Settings</v-card-title>
         <v-divider></v-divider>
         <v-card-text style="height: 100%;">
           <v-container>
@@ -92,9 +86,9 @@
             <v-flex xs6>
               <v-layout column>
                 <v-sheet v-for="(field, index) in results.results" v-if="index<results.results.length/2" :key="field.name" class="mb-2" tile :color="field.correct?'green lighten-5':'red lighten-5'" :style="{border: '1px solid '+(field.correct?'#4CAF50':'#F44336')+' !important', borderRadius: '1px'}">
-                  <v-layout row>
+                  <v-layout row :style="{backgroundColor: field.confidence<0.6?'#FFF176':'unset'}">
                     <v-flex class="font-weight-medium text-truncate" xs8 pl-1>{{field.name}}</v-flex>
-                    <v-flex class="text-xs-right" xs4 pr-1 :style="{backgroundColor: field.confidence<0.6?'#FFEB3B':'unset'}">{{(field.confidence*100).toFixed(2)}}%</v-flex>
+                    <v-flex class="text-xs-right" xs4 pr-1>{{(field.confidence*100).toFixed(2)}}%</v-flex>
                   </v-layout>
                   <v-flex class="text-xs-center text-truncate" xs12 px-1 style="font-family: 'Roboto Mono'; border-top: 0.8px solid white; letter-spacing: -0.05em;">{{field.latex}}</v-flex>
                 </v-sheet>
@@ -103,9 +97,9 @@
             <v-flex xs6 ml-3>
               <v-layout column>
                 <v-sheet v-for="(field, index) in results.results" v-if="index>=results.results.length/2" :key="field.name" class="mb-2" tile :color="field.correct?'green lighten-5':'red lighten-5'" :style="{border: '1px solid '+(field.correct?'#4CAF50':'#F44336')+' !important', borderRadius: '1px'}">
-                  <v-layout row>
+                  <v-layout row :style="{backgroundColor: field.confidence<0.6?'#FFF176':'unset'}">
                     <v-flex class="font-weight-medium text-truncate" xs8 pl-1>{{field.name}}</v-flex>
-                    <v-flex class="text-xs-right" xs4 pr-1 :style="{backgroundColor: field.confidence<0.6?'#FFEB3B':'unset'}">{{(field.confidence*100).toFixed(2)}}%</v-flex>
+                    <v-flex class="text-xs-right" xs4 pr-1>{{(field.confidence*100).toFixed(2)}}%</v-flex>
                   </v-layout>
                   <v-flex class="text-xs-center" xs12 px-1 style="font-family: 'Roboto Mono'; border-top: 0.8px solid white; letter-spacing: -0.05em;">{{field.latex}}</v-flex>
                 </v-sheet>
@@ -116,7 +110,7 @@
         <v-divider></v-divider>
         <v-card-actions>
           <v-flex class="subheading font-weight-medium text-xs-center" xs6>Total Score: {{results.score}}</v-flex>
-          <v-flex class="subheading text-xs-center" xs6>{{lowConfidence}} Low Confidence</v-flex>
+          <v-flex class="subheading text-xs-center" xs6>Low Confidence: {{lowConfidence}}</v-flex>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -139,6 +133,7 @@
   <script src="/__/firebase/5.8.3/firebase-firestore.js"></script>
   <script src="/__/firebase/5.8.3/firebase-functions.js"></script>
   <script src="/__/firebase/init.js"></script>
+  <!-- TODO: change to minified script for production -->
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
   <script src="index.js"></script>

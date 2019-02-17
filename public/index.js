@@ -2,9 +2,6 @@ const gradeForm=firebase.functions().httpsCallable("gradeForm");
 var canvasEl, fieldEl;
 var app=new Vue({
   el: "#app",
-  beforeCreate: function() {
-    //this.$vuetify.theme.primary
-  },
   data: {
     loading: true,
     container: false,
@@ -34,10 +31,10 @@ var app=new Vue({
     results: {}
   },
   computed: {
-    containerWidth: function() {
+    containerWidth: function() { // maximum container box height allowed
       return this.settings.form.width/this.settings.form.height*this.videoEl.offsetHeight || this.container;
     },
-    containerHeight: function() {
+    containerHeight: function() { // initial container box width
       return this.settings.form.height/this.settings.form.width*this.videoEl.offsetWidth || this.container;
     },
     fieldWidth: function() {
@@ -46,19 +43,19 @@ var app=new Vue({
     fieldHeight: function() {
       return this.settings.form.fieldHeight/this.settings.form.height*this.containerEl.clientHeight || this.fields;
     },
-    fieldX: function() {
+    fieldX: function() { // horizontal total base offset of each field
       return this.containerEl.clientWidth/this.settings.form.width || this.fields;
     },
-    fieldY: function() {
+    fieldY: function() { // vertical total base offset of each field
       return this.containerEl.clientHeight/this.settings.form.height || this.fields;
     },
-    gap: function() {
+    gap: function() { // gap between left side of video element and container box
       return (this.videoEl.offsetWidth-this.containerEl.clientWidth)/2 || this.fields;
     },
-    scale: function() {
+    scale: function() { // scale for full-resolution picture compared to screen display
       return this.videoEl.videoWidth/this.camera.width;
     },
-    lowConfidence: function() {
+    lowConfidence: function() { // number of low-confidence results
       if (!this.results.results) return;
       return this.results.results.reduce((count, field)=>field.confidence<0.6?count+1:count, 0);
     }
@@ -88,9 +85,7 @@ var app=new Vue({
       context.drawImage(this.videoEl, 0, 0, this.videoEl.videoWidth/4, this.videoEl.videoHeight/4);
       this.videoEl.srcObject.getVideoTracks()[0].stop();
       this.camera.image=canvasEl.toDataURL("image/jpeg");
-      this.loading=false;
-      this.container=false;
-      this.video=false;
+      this.video=this.container=this.loading=false;
     },
     cancel: function() {
       this.fields=false;
@@ -103,9 +98,7 @@ var app=new Vue({
           this.camera.width=this.videoEl.offsetWidth;
           this.camera.height=this.videoEl.offsetHeight;
           this.container=true;
-          Vue.nextTick(()=>{
-            this.fields=true;
-          });
+          Vue.nextTick(()=>{this.fields=true});
         });
       }).catch(err=>{
         this.errorMsg=err.message;
@@ -120,7 +113,8 @@ var app=new Vue({
         context.drawImage(this.videoEl,
           (this.gap+field.x*this.fieldX)*this.scale,
           (this.containerEl.clientTop+field.y*this.fieldY)*this.scale,
-          this.fieldWidth*this.scale, this.fieldHeight*this.scale, 0, 0, this.fieldWidth*this.scale, this.fieldHeight*this.scale);
+          this.fieldWidth*this.scale, this.fieldHeight*this.scale,
+          0, 0, this.fieldWidth*this.scale, this.fieldHeight*this.scale);
         this.images.push(fieldEl.toDataURL("image/jpeg"));
       });
       gradeForm({

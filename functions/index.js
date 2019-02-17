@@ -26,8 +26,7 @@ exports.gradeForm=functions.https.onCall((data, context)=>{
     key=snapshot.val();
     if (!key.available)
       throw new functions.https.HttpsError("unavailable", "ID "+data.id+" is unavailable.");
-    if (answers[data.form])
-      return answers[data.form]; // answer sheet is cached
+    if (answers[data.form]) return answers[data.form]; // answer sheet is cached
     return firestore.collection("answers").doc(data.form).get().then(doc=>{
       doc=doc.data();
       if (doc.disabled)
@@ -35,8 +34,7 @@ exports.gradeForm=functions.https.onCall((data, context)=>{
       return doc; // get answer sheet
     });
   }).then(form=>{
-    if (!answers[data.form])
-      answers[data.form]=form; // cache answer form if not already
+    if (!answers[data.form]) answers[data.form]=form; // cache answer form if not already
     let requests=[], results=[], score=0;
     data.images.forEach(image=>{
       requests.push(axios.post("https://api.mathpix.com/v3/latex", {
@@ -76,7 +74,7 @@ exports.gradeForm=functions.https.onCall((data, context)=>{
  * @returns {string}        basic info string with weather condition and temperature
  */
 exports.getWeather=functions.https.onRequest((req, res)=>{
-  console.log({date: req.query.date, location: req.query.location, agent: req.get("User-Agent")});
+  console.log({date: req.query.date, location: req.query.location, userAgent: req.get("User-Agent")});
   if (!/^[A-Z]\w+( [A-Z]\w+)*, [A-Z][A-Z]$/.test(req.query.location)) // City, ST
     return res.send("Invalid location format");
   if (!/^[0-9]{4}\/[0-9]{2}\/[0-9]{2}$/.test(req.query.date)) // YYYY/MM/DD
