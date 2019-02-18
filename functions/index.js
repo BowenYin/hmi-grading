@@ -55,9 +55,9 @@ exports.gradeForm=functions.https.onCall((data, context)=>{
         };
         if (res.data.error_info) result.latex=res.data.error_info.message;
         if (form.fields[index].answers.includes(res.data.latex_normal) || form.fields[index].answers.includes(res.data.latex_raw)) {
-          results.correct=true;
+          result.correct=true;
           score++;
-        } else results.correct=false;
+        } else result.correct=false;
         results.push(result);
       });
       return {score, results};

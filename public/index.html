@@ -11,9 +11,9 @@
 </head>
 <body>
   <v-app id="app" v-cloak>
-    <div id="container" v-show="container" :style="{width: '100%', height: containerHeight+'px', maxHeight: videoEl.offsetHeight+'px', maxWidth: containerWidth+'px', marginLeft: 'auto', marginRight: 'auto', border: '2px solid #00C853', borderRadius: '1px', zIndex: 1}"></div>
+    <div id="container" v-show="container" :style="{width: '100%', height: containerHeight+'px', maxHeight: videoEl.offsetHeight+'px', maxWidth: containerWidth+'px', marginLeft: 'auto', marginRight: 'auto', border: '2px solid #4CAF50', zIndex: 1}"></div>
     <div v-show="fields">
-      <div v-for="field in settings.form.fields" :style="{height: fieldHeight+'px', width: fieldWidth+'px', top: 2+field.y*fieldY+'px', left: gap+field.x*fieldX+'px', border: '2px solid #2962FF', borderRadius: '1px', position: 'absolute', zIndex: 1}"></div>
+      <div v-for="field in settings.form.fields" :style="{height: fieldHeight+'px', width: fieldWidth+'px', top: 2+field.y*fieldY+'px', left: gap+field.x*fieldX+'px', border: '2px solid #1A73E8', position: 'absolute', zIndex: 1}"></div>
     </div>
     <video id="video" v-show="video" width="100%" autoplay="true" muted="true" playsinline="true" style="position: absolute;"></video>
     <canvas id="canvas" :height="videoEl.videoHeight/2" :width="videoEl.videoWidth/2" style="display: none;"></canvas>
