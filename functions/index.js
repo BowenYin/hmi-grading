@@ -38,7 +38,8 @@ exports.gradeForm=functions.https.onCall((data, context)=>{
     data.images.forEach(image=>{
       requests.push(axios.post("https://api.mathpix.com/v3/latex", {
         src: image,
-        ocr: ["math", "text"]
+        ocr: ["math", "text"],
+        formats: ["latex_normal", "latex_raw"]
       }, {headers: {
         "app_id": data.id,
         "app_key": key.key,
@@ -49,11 +50,11 @@ exports.gradeForm=functions.https.onCall((data, context)=>{
       responses.forEach((res, index)=>{
         let result={
           name: form.fields[index].name || index,
-          latex: res.data.latex,
+          latex: res.data.latex_normal,
           confidence: res.data.latex_confidence
         };
         if (res.data.error_info) result.latex=res.data.error_info.message;
-        if (form.fields[index].answers.includes(res.data.latex)) {
+        if (form.fields[index].answers.includes(res.data.latex_normal) || form.fields[index].answers.includes(res.data.latex_raw)) {
           results.correct=true;
           score++;
         } else results.correct=false;
@@ -61,6 +62,28 @@ exports.gradeForm=functions.https.onCall((data, context)=>{
       });
       return {score, results};
     });
+  });
+});
+exports.addForm=functions.https.onRequest((req, res)=>{
+  console.log({form: req.body.name, userAgent: req.get("User-Agent")});
+  if (req.body.password!==config.hmi.adminpass)
+    return res.status(401).send("Not authorized");
+  return firestore.collection("forms").doc(req.body.name).create(req.body.doc).then(()=>{
+    return res.status(200).send("Success");
+  }).catch(error=>{
+    console.error(error);
+    return res.status(500).send("Error");
+  });
+});
+exports.addAnswerSheet=functions.https.onRequest((req, res)=>{
+  console.log({form: req.body.name, userAgent: req.get("User-Agent")});
+  if (req.body.password!==config.hmi.adminpass)
+    return res.status(401).send("Not authorized");
+  return firestore.collection("answers").doc(req.body.name).create(req.body.doc).then(()=>{
+    return res.status(200).send("Success");
+  }).catch(error=>{
+    console.error(error);
+    return res.status(500).send("Error");
   });
 });
 /**
