@@ -2,7 +2,7 @@
 > Read my general [Philosophy](#philosophy) at the bottom of this file, since I decided to put it into this project after I couldn't think of anywhere else.
 
 ### Background
-The Harker Math Invitational (HMI) is an annual math competition for middle schoolers held at The Harker School since 2002, with over 300 contestants last year. Due to the packed schedule and sheer number of students, accurately grading all the contests in a short amount of time has become a challenge, often resulting in the awards ceremony being pushed back by up to an hour. So, along comes this project.
+The Harker Math Invitational (HMI) is an annual math competition for middle schoolers held at The Harker School since 2002, with over 300 contestants last year. Due to the packed schedule and sheer number of students, accurately grading all the contests in a short amount of time has become a challenge, often resulting in the awards ceremony being pushed back by up to an hour. That's why I decided to make this.
 
 ### Description
 My goal was to create a web app (because that's much more easily accessible and much easier to make than mobile apps on two different operating systems) that could quickly score an answer sheet scanned right from a phone camera.
@@ -37,7 +37,7 @@ The "container" is outlined in green below, and is a custom ratio box where all 
 
 ### Technical Details
 * Tested on Chrome for Android and Safari for iOS. Also works on modern desktop browsers.
-* Responsiveness: yes, for all screen sizes
+* Fully responsive
 * WebRTC camera
   * `Warning:` this web app *may* drain your battery as it requests the highest possible camera resolution for your device (so that the math recognition is as accurate as possible)
   * Images are drawn onto an HTML canvas element, then converted to JPEG data URIs
