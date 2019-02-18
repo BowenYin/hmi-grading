@@ -29,7 +29,7 @@ That's it.
 > `Note:` Just to reiterate, this was NOT intended to be a complex or time-consuming project. All in all, this only took me about two and a half weeks (including school time) of sparse work.
 
 The "container" is outlined in green below, and is a custom ratio box where all of the fields are. Each of the "fields" is outlined in blue and represents an answer to be scored.
-<p float="center">
+<p align="middle">
   <img src="/images/start.png" width="250">
   <img src="/images/camera.png" width="250"> 
   <img src="/images/results.png" width="250">
