@@ -83,11 +83,10 @@ var app=new Vue({
       let context=canvasEl.getContext("2d");
       this.videoEl.pause();
       context.drawImage(this.videoEl, 0, 0, this.videoEl.videoWidth/2, this.videoEl.videoHeight/2);
-      this.videoEl.srcObject.getVideoTracks()[0].stop();
       this.camera.image=canvasEl.toDataURL("image/jpeg");
       this.video=this.container=this.loading=false;
     },
-    cancel: function() {
+    start: function() {
       this.fields=false;
       navigator.mediaDevices.getUserMedia({
         video: {facingMode: "environment", height: 4096, width: 4096}
@@ -105,6 +104,18 @@ var app=new Vue({
         this.dialogs.error=true;
       });
       this.video=true;
+    },
+    stop: function() {
+      this.loading=true;
+      this.videoEl.pause();
+      this.videoEl.srcObject.getVideoTracks()[0].stop();
+      this.video=this.container=false;
+    },
+    cancel: function() {
+      this.fields=this.loading=false;
+      this.videoEl.play();
+      this.container=this.video=true;
+      Vue.nextTick(()=>{this.fields=true});
     },
     grade: function() {
       this.loading=true;
