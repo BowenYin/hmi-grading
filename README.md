@@ -29,7 +29,11 @@ That's it.
 > `Note:` Just to reiterate, this was NOT intended to be a complex or time-consuming project. All in all, this only took me about two and a half weeks (including school time) of sparse work.
 
 The "container" is outlined in green below, and is a custom ratio box where all of the fields are. Each of the "fields" is outlined in blue and represents an answer to be scored.
-![Initial settings page on start](/images/start.png) ![Video camera screen](/images/camera.png) ![Results page](/images/results.png)
+<p float="center">
+  <img src="/images/start.png" width="250">
+  <img src="/images/camera.png" width="250"> 
+  <img src="/images/results.png" width="250">
+</p>
 
 ### Technical Details
 * Tested on Chrome for Android and Safari for iOS. Also works on modern desktop browsers.
@@ -46,13 +50,13 @@ Math | LaTeX
 ---- | -----
 % | `\%`
 $ | `\$`
-? | `\pi`
-• | `\cdot`
-° | `^ { \circ }`
+Ï€ | `\pi`
+â€¢ | `\cdot`
+Â° | `^ { \circ }`
 text | `\text { text }`
-½ | `\frac { 1 } { 2 }`
+Â½ | `\frac { 1 } { 2 }`
 1/2 | `1 / 2`
-?x | `\sqrt { x }`
+âˆšx | `\sqrt { x }`
 1:23 pm | `1 : 23 p m`, `1 : 23 pm`, `1 : 23`
 5280 ft | `5280 ft`, `5280`
 #### Database schema
@@ -96,7 +100,7 @@ This is my current working philosophy that covers my general beliefs about writi
 1. Write effective, concise code. Short code is smart code.
    * I think verbose code that walks through baby steps actually decreases readibility.
 2. Minimize dependencies. Only use popular and trusted ones.
-   * The only dependencies this project uses—Vue.js, Vuetify.js, the Firebase suite, and Axios—are all fairly well-known ones.
+   * The only dependencies this project usesâ€”Vue.js, Vuetify.js, the Firebase suite, and Axiosâ€”are all fairly well-known ones.
 3. Make your life easier. Don't reinvent the wheel.
    * For example, don't use Node.js HTTP when you can save much more time with Request or Axios.
    * Or, you don't need to manage your sessions, cookies, tokens, etc. when a service like Firebase Auth can seamlessly do it all for you.
