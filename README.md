@@ -13,16 +13,14 @@ The full-screen camera page is overlaid with boxes showing the outline of the co
 
 Results are displayed in a clean two-column list, showing the field name, confidence level, and raw LaTeX from the OCR.
 
-That's it.
-
 ### Technologies
 * Vue.js: fastest growing JavaScript framework
 * Vuetify.js: beautiful and popular material design framework for Vue
 * Firebase: along with GCP, just another trusted product by Google
   * Cloud Firestore: flexible, scalable NoSQL database
   * Realtime Database: low-latency JSON database
-  * Cloud Functions: literally the coolest thing ever
-  * Firebase Hosting: fast, secure, and super easy to use
+  * Cloud Functions w/ Node.js: literally the coolest thing ever
+  * Firebase Hosting: fast, secure, and easy to use
 * Mathpix: an interesting math OCR API
 
 ### Screenshots
@@ -38,6 +36,7 @@ The "container" is outlined in green below, and is a custom ratio box where all 
 ### Technical Details
 * Tested on Chrome for Android and Safari for iOS. Also works on modern desktop browsers.
 * Fully responsive
+* Secure, with built-in ways to prevent API overuse
 * WebRTC camera
   * `Warning:` this web app *may* drain your battery as it requests the highest possible camera resolution for your device (so that the math recognition is as accurate as possible)
   * Images are drawn onto an HTML canvas element, then converted to JPEG data URIs
