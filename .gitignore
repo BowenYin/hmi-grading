@@ -65,3 +65,4 @@ node_modules/
 .env
 
 functions/.runtimeconfig.json
+.DS_Store

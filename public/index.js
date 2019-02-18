@@ -82,7 +82,7 @@ var app=new Vue({
       this.loading=true;
       let context=canvasEl.getContext("2d");
       this.videoEl.pause();
-      context.drawImage(this.videoEl, 0, 0, this.videoEl.videoWidth/4, this.videoEl.videoHeight/4);
+      context.drawImage(this.videoEl, 0, 0, this.videoEl.videoWidth/2, this.videoEl.videoHeight/2);
       this.videoEl.srcObject.getVideoTracks()[0].stop();
       this.camera.image=canvasEl.toDataURL("image/jpeg");
       this.video=this.container=this.loading=false;
@@ -132,6 +132,7 @@ var app=new Vue({
         this.loading=false;
         this.cancel();
       });
+      this.images=[];
     }
   }
 });

@@ -31,10 +31,9 @@ exports.gradeForm=functions.https.onCall((data, context)=>{
       doc=doc.data();
       if (doc.disabled)
         throw new functions.https.HttpsError("unavailable", "Form "+data.form+" is unavailable.");
-      return doc; // get answer sheet
+      return answers[data.form]=doc; // cache answer form
     });
   }).then(form=>{
-    if (!answers[data.form]) answers[data.form]=form; // cache answer form if not already
     let requests=[], results=[], score=0;
     data.images.forEach(image=>{
       requests.push(axios.post("https://api.mathpix.com/v3/latex", {
