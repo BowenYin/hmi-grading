@@ -40,6 +40,11 @@
         <v-icon>check</v-icon>
       </v-btn>
     </v-fab-transition>
+    <v-fab-transition>
+      <v-btn v-show="video" @click="camera.front=!camera.front; stop(); start();" fab small bottom left fixed>
+        <v-icon>switch_camera</v-icon>
+      </v-btn>
+    </v-fab-transition>
     <v-dialog v-model="dialogs.setup" :fullscreen="$vuetify.breakpoint.xsOnly" persistent scrollable max-width="500" transition="dialog-bottom-transition">
       <v-card>
         <v-card-title class="title">Configure Settings</v-card-title>
@@ -86,7 +91,7 @@
             <v-flex xs6>
               <v-layout column>
                 <v-sheet v-for="(field, index) in results.results" v-if="index<results.results.length/2" :key="field.name" class="mb-2" tile :color="field.correct?'green lighten-5':'red lighten-5'" :style="{border: '1px solid '+(field.correct?'#4CAF50':'#F44336')+' !important'}">
-                  <v-layout row :style="{backgroundColor: field.confidence<0.6?'#FFF176':'unset'}">
+                  <v-layout row :style="{backgroundColor: field.confidence<0.75?'#FFF176':'unset'}">
                     <v-flex class="font-weight-medium text-truncate" xs8 pl-1>{{field.name}}</v-flex>
                     <v-flex class="text-xs-right" xs4 pr-1>{{(field.confidence*100).toFixed(2)}}%</v-flex>
                   </v-layout>
@@ -97,7 +102,7 @@
             <v-flex xs6 ml-3>
               <v-layout column>
                 <v-sheet v-for="(field, index) in results.results" v-if="index>=results.results.length/2" :key="field.name" class="mb-2" tile :color="field.correct?'green lighten-5':'red lighten-5'" :style="{border: '1px solid '+(field.correct?'#4CAF50':'#F44336')+' !important'}">
-                  <v-layout row :style="{backgroundColor: field.confidence<0.6?'#FFF176':'unset'}">
+                  <v-layout row :style="{backgroundColor: field.confidence<0.75?'#FFF176':'unset'}">
                     <v-flex class="font-weight-medium text-truncate" xs8 pl-1>{{field.name}}</v-flex>
                     <v-flex class="text-xs-right" xs4 pr-1>{{(field.confidence*100).toFixed(2)}}%</v-flex>
                   </v-layout>

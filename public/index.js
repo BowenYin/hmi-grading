@@ -22,6 +22,7 @@ var app=new Vue({
     camera: {
       width: 0,
       height: 0,
+      front: false,
       image: ""
     },
     errorMsg: "",
@@ -57,7 +58,7 @@ var app=new Vue({
     },
     lowConfidence: function() { // number of low-confidence results
       if (!this.results.results) return;
-      return this.results.results.reduce((count, field)=>field.confidence<0.6?count+1:count, 0);
+      return this.results.results.reduce((count, field)=>field.confidence<0.75?count+1:count, 0);
     }
   },
   mounted: function() {
@@ -89,7 +90,7 @@ var app=new Vue({
     start: function() {
       this.fields=false;
       navigator.mediaDevices.getUserMedia({
-        video: {facingMode: "environment", height: 4096, width: 4096}
+        video: {facingMode: this.camera.front?"user":"environment", height: 4096, width: 4096}
       }).then(stream=>{
         this.videoEl.srcObject=stream;
         this.loading=false;
