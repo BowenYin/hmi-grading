@@ -86,6 +86,28 @@ exports.addAnswerSheet=functions.https.onRequest((req, res)=>{
     return res.status(500).send("Error");
   });
 });
+exports.downloadForm=functions.https.onRequest((req, res)=>{
+  console.log({form: req.body.name, userAgent: req.get("User-Agent")});
+  if (req.body.password!==config.hmi.adminpass)
+    return res.status(401).send("Not authorized");
+  return firestore.collection("forms").doc(req.body.name).get().then(doc=>{
+    return res.status(200).send(doc.data());
+  }).catch(error=>{
+    console.error(error);
+    return res.status(500).send("Error");
+  });
+});
+exports.downloadAnswerSheet=functions.https.onRequest((req, res)=>{
+  console.log({form: req.body.name, userAgent: req.get("User-Agent")});
+  if (req.body.password!==config.hmi.adminpass)
+    return res.status(401).send("Not authorized");
+  return firestore.collection("answers").doc(req.body.name).get().then(doc=>{
+    return res.status(200).send(doc.data());
+  }).catch(error=>{
+    console.error(error);
+    return res.status(500).send("Error");
+  });
+});
 /**
  * This function is NOT for hmi-grading, but I included it so I can share resources with this project.
  * Gets weather data for a specified city and date and stores historical data in the database.
