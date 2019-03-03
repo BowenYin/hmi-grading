@@ -68,7 +68,7 @@ exports.addForm=functions.https.onRequest((req, res)=>{
   console.log({form: req.body.name, userAgent: req.get("User-Agent")});
   if (req.body.password!==config.hmi.adminpass)
     return res.status(401).send("Not authorized");
-  return firestore.collection("forms").doc(req.body.name).create(req.body.doc).then(()=>{
+  return firestore.collection("forms").doc(req.body.name).set(req.body.doc).then(()=>{
     return res.status(200).send("Success");
   }).catch(error=>{
     console.error(error);
@@ -79,7 +79,7 @@ exports.addAnswerSheet=functions.https.onRequest((req, res)=>{
   console.log({form: req.body.name, userAgent: req.get("User-Agent")});
   if (req.body.password!==config.hmi.adminpass)
     return res.status(401).send("Not authorized");
-  return firestore.collection("answers").doc(req.body.name).create(req.body.doc).then(()=>{
+  return firestore.collection("answers").doc(req.body.name).set(req.body.doc).then(()=>{
     return res.status(200).send("Success");
   }).catch(error=>{
     console.error(error);
