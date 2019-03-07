@@ -93,6 +93,9 @@ COLLECTION answers: { // private
   ...
 }
 ```
+<a href="https://crossbrowsertesting.com" target="_blank">
+  <img src="https://i.postimg.cc/k5qVGBcP/CBT-OS-logo-2-Color-H.png" alt="CrossBrowserTesting" width="250">
+</a>
 
 ### Philosophy
 This is my current working philosophy that covers my general beliefs about writing code.
