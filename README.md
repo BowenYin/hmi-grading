@@ -93,8 +93,9 @@ COLLECTION answers: { // private
   ...
 }
 ```
-<a href="https://crossbrowsertesting.com" target="_blank">
-  <img src="https://i.postimg.cc/k5qVGBcP/CBT-OS-logo-2-Color-H.png" alt="CrossBrowserTesting" width="250">
+##### Testing done by
+<a href="http://browserstack.com/" target="_blank">
+  <img src="https://p14.zdusercontent.com/attachment/1015988/0qL2ROgTmLSHMGI73MAlBBwZv" alt="BrowserStack" width="100">
 </a>
 
 ### Philosophy
