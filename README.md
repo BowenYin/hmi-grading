@@ -97,14 +97,3 @@ COLLECTION answers: { // private
 <a href="http://browserstack.com/" target="_blank">
   <img src="https://p14.zdusercontent.com/attachment/1015988/0qL2ROgTmLSHMGI73MAlBBwZv" alt="BrowserStack" width="100">
 </a>
-
-### Philosophy
-This is my current working philosophy that covers my general beliefs about writing code.
-1. Write effective, concise code. Short code is smart code.
-   * I think verbose code that walks through baby steps actually decreases readibility.
-2. Minimize dependencies. Only use popular and trusted ones.
-   * The only dependencies this project uses—Vue.js, Vuetify.js, the Firebase suite, and Axios—are all fairly well-known ones.
-3. Make your life easier. Don't reinvent the wheel.
-   * For example, don't use Node.js HTTP when you can save much more time with Request or Axios.
-   * Or, you don't need to manage your sessions, cookies, tokens, etc. when a service like Firebase Auth can seamlessly do it all for you.
-###### These are especially true since I'm a busy high school student right now, not a full-time software engineer. Also because of this, my philosophy will change in the future.
