@@ -21,7 +21,7 @@ Results are displayed in a clean two-column list, showing the field name, confid
   * Realtime Database: low-latency JSON database
   * Cloud Functions w/ Node.js: literally the coolest thing ever
   * Firebase Hosting: fast, secure, and easy to use
-* Mathpix: an interesting math OCR API
+* Mathpix
 
 ### Screenshots
 > `Note:` Just to reiterate, this was NOT intended to be a complex or time-consuming project. All in all, this only took me about two and a half weeks (including school time) of sparse work.
