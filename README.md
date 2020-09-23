@@ -14,12 +14,12 @@ The full-screen camera page is overlaid with boxes showing the outline of the co
 Results are displayed in a clean two-column list, showing the field name, confidence level, and raw LaTeX from the OCR.
 
 ### Technologies
-* Vue.js: fastest growing JavaScript framework
-* Vuetify.js: beautiful and popular material design framework for Vue
-* Firebase: along with GCP, just another trusted product by Google
+* Vue.js: popular JavaScript framework
+* Vuetify.js: beautiful material design framework for Vue
+* Firebase (along with GCP)
   * Cloud Firestore: flexible, scalable NoSQL database
   * Realtime Database: low-latency JSON database
-  * Cloud Functions w/ Node.js: literally the coolest thing ever
+  * Cloud Functions w/ Node.js: coolest thing ever
   * Firebase Hosting: fast, secure, and easy to use
 * Mathpix
 
@@ -93,7 +93,7 @@ COLLECTION answers: { // private
   ...
 }
 ```
-##### Testing done by
+##### Testing done with
 <a href="http://browserstack.com/" target="_blank">
   <img src="https://p14.zdusercontent.com/attachment/1015988/0qL2ROgTmLSHMGI73MAlBBwZv" alt="BrowserStack" width="100">
 </a>
