@@ -1,5 +1,4 @@
 ## HMI Grading
-> Read my general [Philosophy](#philosophy) at the bottom of this file, since I decided to put it into this project after I couldn't think of anywhere else.
 
 ### Background
 The Harker Math Invitational (HMI) is an annual math competition for middle schoolers held at The Harker School since 2002, with over 300 contestants last year. Due to the packed schedule and sheer number of students, accurately grading all the contests in a short amount of time has become a challenge, often resulting in the awards ceremony being pushed back by up to an hour. That's why I decided to make this.
@@ -24,7 +23,6 @@ Results are displayed in a clean two-column list, showing the field name, confid
 * Mathpix
 
 ### Screenshots
-> `Note:` Just to reiterate, this was NOT intended to be a complex or time-consuming project. All in all, this only took me about two and a half weeks (including school time) of sparse work.
 
 The "container" is outlined in green below, and is a custom ratio box where all of the fields are. Each of the "fields" is outlined in blue and represents an answer to be scored.
 <p align="middle">
