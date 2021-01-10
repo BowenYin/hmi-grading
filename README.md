@@ -91,8 +91,9 @@ COLLECTION answers: { // private
   ...
 }
 ```
+![](https://87f7290bbb154c8753a737c7b24a6d1e.m.pipedream.net/hmi-grading)
+
 ##### Testing done with
 <a href="http://browserstack.com/" target="_blank">
   <img src="https://p14.zdusercontent.com/attachment/1015988/0qL2ROgTmLSHMGI73MAlBBwZv" alt="BrowserStack" width="100">
 </a>
-![](https://87f7290bbb154c8753a737c7b24a6d1e.m.pipedream.net/hmi-grading)
